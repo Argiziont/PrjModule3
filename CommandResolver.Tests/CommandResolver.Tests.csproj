@@ -17,4 +17,10 @@
     <ProjectReference Include="..\CommandResolver\CommandResolver.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Commands.cdat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

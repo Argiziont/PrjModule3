@@ -1,0 +1,5 @@
+﻿POP	PopCommand
+PUSH	PushCommand
+MATH	MathCommand
+PRINT	PrintCommand
+DEFINE	DefineCommand
