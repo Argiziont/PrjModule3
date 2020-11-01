@@ -57,8 +57,17 @@ namespace PrjModule3
             while (true)
             {
                 string inputCommand = Console.ReadLine();
+
                 if (inputCommand == "EXIT")
                     break;
+
+                if (inputCommand.Contains("#"))
+                {
+                    inputCommand = inputCommand.Split("#")[0];
+                    inputCommand=inputCommand.Trim();
+                    if (inputCommand == "")
+                        continue;
+                }
 
                 try
                 {
