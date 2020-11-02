@@ -18,7 +18,7 @@ namespace CommandResolver.Commands
         /// <param name="variable">Your variable name</param>
         /// <param name="number">Your variable value</param>
         /// <param name="pair">MutableKeyPair where result will be stored</param>
-        public DefineCommand(string variable, string number, ref MutableKeyValuePair<string, object> pair, Stack<MutableKeyValuePair<string, object>> _ = null)
+        public DefineCommand(string variable, string number, ref MutableKeyValuePair<string, object> pair)
         {
             VariableName = variable ?? throw new CommandExecutionException("Variable name must be defined");
             Number = number ?? throw new CommandExecutionException("Variable must be defined");

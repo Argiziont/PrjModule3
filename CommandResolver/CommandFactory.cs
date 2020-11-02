@@ -4,6 +4,8 @@ using CommandResolver.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 
 namespace CommandResolver
 {
@@ -46,29 +48,15 @@ namespace CommandResolver
         public ICommand GetCommand(string command)
         {
             var splitedCommands = command.Split(' ');
-            string functionName;
+            string functionName= splitedCommands[0];
 
             List<object> invocationArgs = new List<object>();
 
-            //1 more possible way to improve this switch!!!
-            switch (splitedCommands.Length)
+            for (int i = 1; i < splitedCommands.Length; i++)
             {
-                case 1:
-                    functionName = splitedCommands[0];
-                    break;
-                case 2:
-                    functionName = splitedCommands[0];
-                    invocationArgs.Add(splitedCommands[1]);
-                    break;
-                case 3:
-                    functionName = splitedCommands[0];
-                    invocationArgs.Add(splitedCommands[1]);
-                    invocationArgs.Add(splitedCommands[2]);
-                    break;
-                default:
-                    throw new CommandFactoryException("Wrong number of parametrs");
-
+                invocationArgs.Add(splitedCommands[i]);
             }
+
             if (CommandList.ContainsKey(functionName))
             {
 
@@ -76,8 +64,13 @@ namespace CommandResolver
 
                 var objectType = Type.GetType(objectToInstantiate);
 
-                invocationArgs.Add(MutablePairs);
-                invocationArgs.Add(MainStack);
+                var paramTypes = getAllCtorsParamTypes(objectType);
+
+                if(paramTypes.SingleOrDefault(p => p.Contains("MutableKeyValuePair"))!=null)
+                    invocationArgs.Add(MutablePairs);
+
+                if (paramTypes.SingleOrDefault(p => p.Contains("Stack")) != null)
+                    invocationArgs.Add(MainStack);
 
                 try
                 {
@@ -86,14 +79,27 @@ namespace CommandResolver
                 }
                 catch
                 {
-
-                    throw new CommandFactoryException($"Couldn't create objct of \" {objectType} \" instance");
+                    throw new CommandFactoryException($"Couldn't create object of \" {objectType} \" instance, wrong function arguments");
                 }
             }
             else
             {
                 throw new CommandFactoryException("There no such command");
             }
+        }
+        private string[] getAllCtorsParamTypes(Type obj)
+        {
+            List<string> ctorsTypes = new List<string>();
+
+            var ctors = obj.GetConstructors();
+            foreach (var ctor in ctors)
+            {
+                foreach (var parameter in ctor.GetParameters())
+                {
+                    ctorsTypes.Add(parameter.ParameterType.Name);
+                }
+            }
+            return ctorsTypes.ToArray();
         }
     }
 }

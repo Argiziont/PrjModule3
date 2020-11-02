@@ -16,7 +16,7 @@ namespace CommandResolver.Commands
         /// </summary>
         /// <param name="operaion">Your operation name</param>
         /// <param name="stack">Main stack of programm where all varibles are stored</param>
-        public MathCommand(string operaion, MutableKeyValuePair<string, object> _, ref Stack<MutableKeyValuePair<string, object>> stack)
+        public MathCommand(string operaion, ref Stack<MutableKeyValuePair<string, object>> stack)
         {
             MathOperation = operaion ?? throw new CommandExecutionException("Math operation must be defined");
             MainStack = stack ?? throw new CommandExecutionException("Could process this if Stack isn't defined");

@@ -13,7 +13,7 @@ namespace CommandResolver.Commands
         /// Prints last vaariable from stack
         /// </summary>
         /// <param name="stack">Main stack of programm where all varibles are stored</param>
-        public PrintCommand(MutableKeyValuePair<string, object> _, ref Stack<MutableKeyValuePair<string, object>> stack)
+        public PrintCommand(ref Stack<MutableKeyValuePair<string, object>> stack)
         {
             MainStack = stack ?? throw new CommandExecutionException("Could process this if Stack isn't defined");
         }

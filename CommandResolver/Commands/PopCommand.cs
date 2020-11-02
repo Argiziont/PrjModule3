@@ -13,7 +13,7 @@ namespace CommandResolver.Commands
         /// Removes last variable from stack
         /// </summary>
         /// <param name="stack">Main stack of programm where all varibles are stored</param>
-        public PopCommand(MutableKeyValuePair<string, object> _, ref Stack<MutableKeyValuePair<string, object>> stack)
+        public PopCommand(ref Stack<MutableKeyValuePair<string, object>> stack)
         {
             MainStack = stack ?? throw new CommandExecutionException("Could process this if Stack isn't defined");
         }

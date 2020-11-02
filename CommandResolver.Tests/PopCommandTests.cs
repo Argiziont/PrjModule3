@@ -22,11 +22,10 @@ namespace CommandResolver.Tests
         public void Constructor_Passes_InputIsPairStack()
         {
             // Arrange
-            MutableKeyValuePair<string, object> pair = null;
             Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
 
             // Act
-            var result = Record.Exception(() => new PopCommand(pair, ref stack));
+            var result = Record.Exception(() => new PopCommand(ref stack));
 
             // Assert
             Assert.Null(result);
@@ -37,11 +36,10 @@ namespace CommandResolver.Tests
         public void Constructor_ThrowsExeption_IfInputNumberNameIsNull()
         {
             // Arrange
-            MutableKeyValuePair<string, object> pair = new MutableKeyValuePair<string, object>();
             Stack<MutableKeyValuePair<string, object>> stack = null;
 
             // Act
-            void result() => new PopCommand(pair, ref stack);
+            void result() => new PopCommand(ref stack);
 
             // Assert
             Assert.Throws<CommandExecutionException>(result);
@@ -53,13 +51,12 @@ namespace CommandResolver.Tests
         public void Run_Passes_InputOperationIsCorrect()
         {
             // Arrange
-            MutableKeyValuePair<string, object> pair = null;
             Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
 
             stack.Push(new MutableKeyValuePair<string, object>("var2", 5));
             var stackSizeExpected = 0;
 
-            var pop = new PopCommand(pair, ref stack);
+            var pop = new PopCommand(ref stack);
 
             // Act
             pop.Run();
@@ -73,10 +70,9 @@ namespace CommandResolver.Tests
         public void Run_ThrowsException_InputStackIsIncorrect()
         {
             // Arrange
-            MutableKeyValuePair<string, object> pair = null;
             Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
 
-            var pop = new PrintCommand(pair, ref stack);
+            var pop = new PrintCommand( ref stack);
 
             // Act
             void result() => pop.Run();

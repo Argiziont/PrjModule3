@@ -22,11 +22,10 @@ namespace CommandResolver.Tests
         public void Constructor_Passes_InputIsPairStack()
         {
             // Arrange
-            MutableKeyValuePair<string, object> pair = null;
             Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
 
             // Act
-            var result = Record.Exception(() => new PrintCommand(pair, ref stack));
+            var result = Record.Exception(() => new PrintCommand(ref stack));
 
             // Assert
             Assert.Null(result);
@@ -37,11 +36,10 @@ namespace CommandResolver.Tests
         public void Constructor_ThrowsExeption_IfInputNumberNameIsNull()
         {
             // Arrange
-            MutableKeyValuePair<string, object> pair = new MutableKeyValuePair<string, object>();
             Stack<MutableKeyValuePair<string, object>> stack = null;
 
             // Act
-            void result() => new PrintCommand(pair, ref stack);
+            void result() => new PrintCommand(ref stack);
 
             // Assert
             Assert.Throws<CommandExecutionException>(result);
@@ -53,12 +51,11 @@ namespace CommandResolver.Tests
         public void Run_Passes_InputOperationIsCorrect()
         {
             // Arrange
-            MutableKeyValuePair<string, object> pair = null;
             Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
 
             stack.Push(new MutableKeyValuePair<string, object>("var2", 5));
 
-            var print = new PrintCommand(pair, ref stack);
+            var print = new PrintCommand(ref stack);
 
             // Act
             var result = Record.Exception(() => print.Run());
@@ -72,10 +69,9 @@ namespace CommandResolver.Tests
         public void Run_ThrowsException_InputStackIsIncorrect()
         {
             // Arrange
-            MutableKeyValuePair<string, object> pair = null;
             Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
 
-            var print = new PrintCommand(pair, ref stack);
+            var print = new PrintCommand(ref stack);
 
             // Act
             void result() => print.Run();

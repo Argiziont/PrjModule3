@@ -23,11 +23,10 @@ namespace CommandResolver.Tests
         {
             // Arrange
             string operation = "+";
-            MutableKeyValuePair<string, object> pair = null;
             Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
 
             // Act
-            var result = Record.Exception(() => new MathCommand(operation, pair, ref stack));
+            var result = Record.Exception(() => new MathCommand(operation, ref stack));
 
             // Assert
             Assert.Null(result);
@@ -39,11 +38,10 @@ namespace CommandResolver.Tests
         {
             // Arrange
             string operation = null;
-            MutableKeyValuePair<string, object> pair = null;
             Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
 
             // Act
-            void result() => new MathCommand(operation, pair, ref stack);
+            void result() => new MathCommand(operation, ref stack);
 
             // Assert
             Assert.Throws<CommandExecutionException>(result);
@@ -55,11 +53,10 @@ namespace CommandResolver.Tests
         {
             // Arrange
             string operation = "+";
-            MutableKeyValuePair<string, object> pair = new MutableKeyValuePair<string, object>();
             Stack<MutableKeyValuePair<string, object>> stack = null;
 
             // Act
-            void result() => new MathCommand(operation, pair, ref stack);
+            void result() => new MathCommand(operation, ref stack);
 
             // Assert
             Assert.Throws<CommandExecutionException>(result);
@@ -72,7 +69,6 @@ namespace CommandResolver.Tests
         {
             // Arrange
             string operation = "+";
-            MutableKeyValuePair<string, object> pair = null;
             Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
 
             stack.Push(new MutableKeyValuePair<string, object>("var1", 5));
@@ -80,7 +76,7 @@ namespace CommandResolver.Tests
 
             double expectedNumber = 10;
             var expectedName = "ans";
-            var math = new MathCommand(operation, pair, ref stack);
+            var math = new MathCommand(operation, ref stack);
 
             // Act
             math.Run();
@@ -96,7 +92,6 @@ namespace CommandResolver.Tests
         {
             // Arrange
             string operation = "*";
-            MutableKeyValuePair<string, object> pair = null;
             Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
 
             stack.Push(new MutableKeyValuePair<string, object>("var1", 5));
@@ -104,7 +99,7 @@ namespace CommandResolver.Tests
 
             double expectedNumber = 25;
             var expectedName = "ans";
-            var math = new MathCommand(operation, pair, ref stack);
+            var math = new MathCommand(operation, ref stack);
 
             // Act
             math.Run();
@@ -120,7 +115,6 @@ namespace CommandResolver.Tests
         {
             // Arrange
             string operation = "/";
-            MutableKeyValuePair<string, object> pair = null;
             Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
 
             stack.Push(new MutableKeyValuePair<string, object>("var1", 5));
@@ -128,7 +122,7 @@ namespace CommandResolver.Tests
 
             double expectedNumber = 1;
             var expectedName = "ans";
-            var math = new MathCommand(operation, pair, ref stack);
+            var math = new MathCommand(operation, ref stack);
 
             // Act
             math.Run();
@@ -144,7 +138,6 @@ namespace CommandResolver.Tests
         {
             // Arrange
             string operation = "-";
-            MutableKeyValuePair<string, object> pair = null;
             Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
 
             stack.Push(new MutableKeyValuePair<string, object>("var1", 5));
@@ -152,7 +145,7 @@ namespace CommandResolver.Tests
 
             double expectedNumber = 0;
             var expectedName = "ans";
-            var math = new MathCommand(operation, pair, ref stack);
+            var math = new MathCommand(operation, ref stack);
 
             // Act
             math.Run();
@@ -168,14 +161,13 @@ namespace CommandResolver.Tests
         {
             // Arrange
             string operation = "SQRT";
-            MutableKeyValuePair<string, object> pair = null;
             Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
 
             stack.Push(new MutableKeyValuePair<string, object>("var1", 25));
 
             double expectedNumber = 5;
             var expectedName = "ans";
-            var math = new MathCommand(operation, pair, ref stack);
+            var math = new MathCommand(operation, ref stack);
 
             // Act
             math.Run();
@@ -191,13 +183,12 @@ namespace CommandResolver.Tests
         {
             // Arrange
             string operation = "test";
-            MutableKeyValuePair<string, object> pair = null;
             Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
 
             stack.Push(new MutableKeyValuePair<string, object>("var1", 5));
             stack.Push(new MutableKeyValuePair<string, object>("var2", 5));
 
-            var math = new MathCommand(operation, pair, ref stack);
+            var math = new MathCommand(operation, ref stack);
 
             // Act
             void result() => math.Run();
@@ -212,12 +203,11 @@ namespace CommandResolver.Tests
         {
             // Arrange
             string operation = "+";
-            MutableKeyValuePair<string, object> pair = null;
             Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
 
             stack.Push(new MutableKeyValuePair<string, object>("var1", 5));
 
-            var math = new MathCommand(operation, pair, ref stack);
+            var math = new MathCommand(operation, ref stack);
 
             // Act
             void result() => math.Run();
