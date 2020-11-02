@@ -64,10 +64,11 @@ namespace PrjModule3
                 if (inputCommand.Contains("#"))
                 {
                     inputCommand = inputCommand.Split("#")[0];
-                    inputCommand=inputCommand.Trim();
                     if (inputCommand == "")
                         continue;
                 }
+
+                inputCommand=inputCommand.Trim();
 
                 try
                 {

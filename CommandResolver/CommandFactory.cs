@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace CommandResolver
 {
@@ -47,7 +46,7 @@ namespace CommandResolver
         }
         public ICommand GetCommand(string command)
         {
-            var splitedCommands = command.Split(' ');
+            string[] splitedCommands = command.Split(' ');
             string functionName= splitedCommands[0];
 
             List<object> invocationArgs = new List<object>();
@@ -62,14 +61,14 @@ namespace CommandResolver
 
                 string objectToInstantiate = $"CommandResolver.Commands.{CommandList[functionName]}, CommandResolver";
 
-                var objectType = Type.GetType(objectToInstantiate);
+                Type objectType = Type.GetType(objectToInstantiate);
 
-                var paramTypes = getAllCtorsParamTypes(objectType);
+                string[] paramTypes = getAllCtorsParamTypes(objectType);
 
-                if(paramTypes.SingleOrDefault(p => p.Contains("MutableKeyValuePair"))!=null)
+                if(paramTypes.SingleOrDefault(p => p.Contains(typeof(MutableKeyValuePair<string,object>).Name))!=null)
                     invocationArgs.Add(MutablePairs);
 
-                if (paramTypes.SingleOrDefault(p => p.Contains("Stack")) != null)
+                if (paramTypes.SingleOrDefault(p => p.Contains(typeof(Stack<MutableKeyValuePair<string, object>>).Name)) != null)
                     invocationArgs.Add(MainStack);
 
                 try
@@ -79,12 +78,12 @@ namespace CommandResolver
                 }
                 catch
                 {
-                    throw new CommandFactoryException($"Couldn't create object of \" {objectType} \" instance, wrong function arguments");
+                    throw new CommandFactoryException($"Couldn't create object of \" {objectType.Name} \" instance, wrong function arguments");
                 }
             }
             else
             {
-                throw new CommandFactoryException("There no such command");
+                throw new CommandFactoryException($"There no such function: {functionName}");
             }
         }
         private string[] getAllCtorsParamTypes(Type obj)
