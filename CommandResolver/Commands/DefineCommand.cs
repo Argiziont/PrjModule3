@@ -10,19 +10,19 @@ namespace CommandResolver.Commands
     {
         public string VariableName { get; set; }
         public string Number { get; set; }
-        public MutableKeyValuePair<string, object> Pair { get; set; }
+        public CommandContext Context { get; set; }
 
         /// <summary>
         /// Setups Define command that defines your variable with given number
         /// </summary>
         /// <param name="variable">Your variable name</param>
         /// <param name="number">Your variable value</param>
-        /// <param name="pair">MutableKeyPair where result will be stored</param>
-        public DefineCommand(string variable, string number, ref MutableKeyValuePair<string, object> pair)
+        /// <param name="context">Program Context where result will bes stored</param>
+        public DefineCommand(string variable, string number, CommandContext context)
         {
             VariableName = variable ?? throw new CommandExecutionException("Variable name must be defined");
             Number = number ?? throw new CommandExecutionException("Variable must be defined");
-            Pair = pair ?? throw new CommandExecutionException("Could process this if KeyValuePair isn't defined");
+            Context = context ?? throw new CommandExecutionException("Could process this if there isn't context");
         }
 
         /// <summary>
@@ -30,29 +30,31 @@ namespace CommandResolver.Commands
         /// </summary>
         public void Run()
         {
+            object value;
+
             if (Number.Contains('.'))
             {
                 try
                 {
-                    Pair.Value = Convert.ToDouble(Number);
+                    value = Convert.ToDouble(Number);
                 }
                 catch
                 {
-                    throw new CommandExecutionException("Wrong second parameter", Pair);
+                    throw new CommandExecutionException("Wrong second parameter", Context.Pair);
                 }
             }
             else
             {
                 try
                 {
-                    Pair.Value = Convert.ToInt64(Number);
+                    value = Convert.ToInt64(Number);
                 }
                 catch
                 {
-                    throw new CommandExecutionException("Wrong second parameter", Pair);
+                    throw new CommandExecutionException("Wrong second parameter", Context.Pair);
                 }
             }
-            Pair.Id = VariableName;
+            Context.SetVariable(VariableName, value);
         }
     }
 }

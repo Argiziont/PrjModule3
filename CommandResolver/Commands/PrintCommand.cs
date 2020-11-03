@@ -8,26 +8,29 @@ namespace CommandResolver.Commands
 {
     public class PrintCommand : ICommand
     {
-        public Stack<MutableKeyValuePair<string, object>> MainStack { get; private set; }
+        public CommandContext Context { get; set; }
         /// <summary>
         /// Prints last vaariable from stack
         /// </summary>
-        /// <param name="stack">Main stack of programm where all varibles are stored</param>
-        public PrintCommand(ref Stack<MutableKeyValuePair<string, object>> stack)
+        /// <param name="context">Program Context where result will bes stored</param>
+        public PrintCommand(CommandContext context)
         {
-            MainStack = stack ?? throw new CommandExecutionException("Could process this if Stack isn't defined");
+            Context = context ?? throw new CommandExecutionException("Could process this if there isn't context");
         }
         /// <summary>
         /// Runs command execution
         /// </summary>
         public void Run()
         {
-            if (MainStack.TryPeek(out MutableKeyValuePair<string, object> result))
+            try
             {
-                Console.WriteLine($"Last element in stack has name: {result.Id} and value: {result.Value}");
+                Console.WriteLine($"Last element in stack has name: {Context.PeekLastStackElement().Id} and value: {Context.PeekLastStackElement().Value}");
             }
-            else
-                throw new CommandExecutionException("There no element in stack to print");
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

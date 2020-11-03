@@ -1,27 +1,46 @@
 ﻿using CommandResolver.Exceptions;
 using CommandResolver.Helpers;
 using CommandResolver.Interfaces;
-using System.Collections.Generic;
 
 namespace CommandResolver.Commands
 {
     public class PushCommand : ICommand
     {
         public string VariableName { get; private set; }
-        public Stack<MutableKeyValuePair<string, object>> MainStack { get; private set; }
-        public MutableKeyValuePair<string, object> Pair { get; private set; }
+        public string VariableValue { get; private set; }
+        public CommandContext Context { get; set; }
+        
+        /// <summary>
+        /// Pushes your defined variable to stack
+        /// </summary>
+        /// <param name="context">Program Context where result will bes stored</param>
+        public PushCommand(CommandContext context)
+        {
+            Context = context ?? throw new CommandExecutionException("Could process this if there isn't context");
+        }
 
         /// <summary>
         /// Pushes your defined variable to stack
         /// </summary>
         /// <param name="variable">Your variable name</param>
-        /// <param name="pair">MutableKeyPair where result will be stored</param>
-        /// <param name="stack">Main stack of programm where all varibles are stored</param>
-        public PushCommand(string variable, ref MutableKeyValuePair<string, object> pair, ref Stack<MutableKeyValuePair<string, object>> stack)
+        /// <param name="context">Program Context where result will bes stored</param>
+        public PushCommand(string variable, CommandContext context)
         {
             VariableName = variable ?? throw new CommandExecutionException("Variable name must be defined");
-            MainStack = stack ?? throw new CommandExecutionException("Could process this if Stack isn't defined");
-            Pair = pair ?? throw new CommandExecutionException("Could process this if KeyValuePair isn't defined");
+            Context = context ?? throw new CommandExecutionException("Could process this if there isn't context");
+        }
+
+        /// <summary>
+        /// Pushes your defined variable to stack
+        /// </summary>
+        /// <param name="variable">Your variable name</param>
+        /// <param name="value">Your variable value</param>
+        /// <param name="context">Program Context where result will bes stored</param>
+        public PushCommand(string variable, string value, CommandContext context)
+        {
+            VariableValue = value ?? throw new CommandExecutionException("Variable value must be defined");
+            VariableName = variable ?? throw new CommandExecutionException("Variable name must be defined");
+            Context = context ?? throw new CommandExecutionException("Could process this if there isn't context");
         }
 
         /// <summary>
@@ -29,13 +48,30 @@ namespace CommandResolver.Commands
         /// </summary>
         public void Run()
         {
-            if (Pair.Id == null)
-                throw new CommandExecutionException($"You trying to push {VariableName} but this variable is not defined", Pair, MainStack);
+            if (VariableName == null && VariableValue == null)
+            {
+                if (Context.Pair == null)
+                    throw new CommandExecutionException($"You trying to push last defined valiable you didn't define nothing");
+                Context.PushStack();
+                return;
+            }
+            if (VariableValue == null && VariableValue != null)
+            {
+                if (Context.Pair.Id == null)
+                    throw new CommandExecutionException($"You trying to push {VariableName} but this variable is not defined");
 
-            if (Pair.Id != VariableName)
-                throw new CommandExecutionException($"You trying to push {VariableName} but last variable that you defined is {Pair.Id}", Pair, MainStack);
+                if (Context.Pair.Id != VariableName)
+                    throw new CommandExecutionException($"You trying to push {VariableName} but last variable that you defined is {Context.Pair.Id}", Context.Pair, Context.Stack);
+                Context.PushStack(new MutableKeyValuePair<string, object>(Context.Pair.Id, Context.Pair.Value));
+                return;
+            }
+            if (VariableName != null && VariableValue != null)
+            {
+                Context.PushStack(new MutableKeyValuePair<string, object>(VariableName, VariableValue));
+                return;
+            }
 
-            MainStack.Push(new MutableKeyValuePair<string, object>(Pair.Id, Pair.Value));
+            throw new CommandExecutionException($"Nothing was pushed due to incorrect arguments", Context.Pair, Context.Stack);
         }
     }
 }

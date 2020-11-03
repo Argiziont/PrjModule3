@@ -4,7 +4,6 @@ using CommandResolver.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace CommandResolver
 {
@@ -12,23 +11,18 @@ namespace CommandResolver
     {
         public string Command { get; private set; }
         public string CommandFilePath { get; private set; } = @"Commands.cdat";
-        public MutableKeyValuePair<string, object> MutablePairs { get; private set; }
-        public Stack<MutableKeyValuePair<string, object>> MainStack { get; private set; }
+        public CommandContext Context { get; private set; }
         public Dictionary<string, string> CommandList { get; private set; }
 
-        public CommandFactory(ref MutableKeyValuePair<string, object> pairs, ref Stack<MutableKeyValuePair<string, object>> stack)
+        public CommandFactory(CommandContext context)
         {
             if (File.Exists(CommandFilePath))
             {
                 string readText = File.ReadAllText(CommandFilePath);
                 CommandList = new Dictionary<string, string>();
-                MutablePairs = pairs ?? throw new CommandExecutionException("Could process this if KeyValuePair isn't defined");
-                MainStack = stack ?? throw new CommandExecutionException("Could process this if Stack isn't defined");
+                Context = context ?? throw new CommandExecutionException("Could process this if there isn't context");
 
-                string[] linesFromFile = readText.Split(
-                new[] { Environment.NewLine },
-                StringSplitOptions.None
-                );
+                string[] linesFromFile = readText.Split(new[] { Environment.NewLine, "\n" }, StringSplitOptions.None);
 
                 foreach (string commandLine in linesFromFile)
                 {
@@ -47,58 +41,43 @@ namespace CommandResolver
         public ICommand GetCommand(string command)
         {
             string[] splitedCommands = command.Split(' ');
-            string functionName= splitedCommands[0];
-
+            string functionName = splitedCommands[0];
             List<object> invocationArgs = new List<object>();
+
+            if (!CommandList.ContainsKey(functionName))
+            {
+                throw new CommandFactoryException($"There no such function: {functionName}");
+            }
+
+            var splitedCommandFromList = CommandList[functionName].Split(' ');
+
+            functionName = splitedCommandFromList[0];
+            for (int i = 1; i < splitedCommandFromList.Length; i++)
+            {
+                invocationArgs.Add(splitedCommandFromList[i]);
+            }
 
             for (int i = 1; i < splitedCommands.Length; i++)
             {
                 invocationArgs.Add(splitedCommands[i]);
             }
 
-            if (CommandList.ContainsKey(functionName))
+
+            string objectToInstantiate = $"CommandResolver.Commands.{functionName}, CommandResolver";
+
+            Type objectType = Type.GetType(objectToInstantiate);
+
+            invocationArgs.Add(Context);
+
+            try
             {
-
-                string objectToInstantiate = $"CommandResolver.Commands.{CommandList[functionName]}, CommandResolver";
-
-                Type objectType = Type.GetType(objectToInstantiate);
-
-                string[] paramTypes = getAllCtorsParamTypes(objectType);
-
-                if(paramTypes.SingleOrDefault(p => p.Contains(typeof(MutableKeyValuePair<string,object>).Name))!=null)
-                    invocationArgs.Add(MutablePairs);
-
-                if (paramTypes.SingleOrDefault(p => p.Contains(typeof(Stack<MutableKeyValuePair<string, object>>).Name)) != null)
-                    invocationArgs.Add(MainStack);
-
-                try
-                {
-                    dynamic instantiatedObject = Activator.CreateInstance(objectType, invocationArgs.ToArray());
-                    return instantiatedObject;
-                }
-                catch
-                {
-                    throw new CommandFactoryException($"Couldn't create object of \" {objectType.Name} \" instance, wrong function arguments");
-                }
+                dynamic instantiatedObject = Activator.CreateInstance(objectType, invocationArgs.ToArray());
+                return instantiatedObject;
             }
-            else
+            catch
             {
-                throw new CommandFactoryException($"There no such function: {functionName}");
+                throw new CommandFactoryException($"Couldn't create object of \" {objectType.Name} \" instance, wrong function arguments");
             }
-        }
-        private string[] getAllCtorsParamTypes(Type obj)
-        {
-            List<string> ctorsTypes = new List<string>();
-
-            var ctors = obj.GetConstructors();
-            foreach (var ctor in ctors)
-            {
-                foreach (var parameter in ctor.GetParameters())
-                {
-                    ctorsTypes.Add(parameter.ParameterType.Name);
-                }
-            }
-            return ctorsTypes.ToArray();
         }
     }
 }

@@ -47,13 +47,10 @@ namespace PrjModule3
         }
         private static void Menu()
         {
-            MutableKeyValuePair<string, object> MutablePairs = new MutableKeyValuePair<string, object>();
-            Stack<MutableKeyValuePair<string, object>> MainStack = new Stack<MutableKeyValuePair<string, object>>();
 
-            CommandFactory commandFactory = new CommandFactory(ref MutablePairs, ref MainStack);
+            CommandFactory commandFactory = new CommandFactory(new CommandContext());
 
-            List<ICommand> commands = new List<ICommand>();
-
+            ICommand currentCommand = null;
             while (true)
             {
                 string inputCommand = Console.ReadLine();
@@ -68,28 +65,26 @@ namespace PrjModule3
                         continue;
                 }
 
-                inputCommand=inputCommand.Trim();
+                inputCommand = inputCommand.Trim();
 
                 try
                 {
-                    commands.Add(commandFactory.GetCommand(inputCommand));
+                    currentCommand = commandFactory.GetCommand(inputCommand);
                 }
                 catch (CommandFactoryException ex)
                 {
                     ConsoleWithColor("\n" + ex.Message + "\n", ConsoleColor.Red);
+                    continue;
                 }
-            }
 
-            ConsoleWithColor("\nYour script  results here ---------------\n\n", ConsoleColor.Red);
-            for (int i = 0; i < commands.Count; i++)
-            {
                 try
                 {
-                    commands[i].Run();
+                    currentCommand.Run();
                 }
                 catch (CommandExecutionException ex)
                 {
-                    ConsoleWithColor($"\n!!! Error on line {i + 1} with error: {ex.Message}\n\n", ConsoleColor.Red);
+                    ConsoleWithColor($"\n!!! Error : {ex.Message}\n\n", ConsoleColor.Red);
+                    continue;
                 }
             }
         }

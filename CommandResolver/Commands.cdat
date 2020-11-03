@@ -1,5 +1,8 @@
 ﻿POP	PopCommand
 PUSH	PushCommand
-MATH	MathCommand
++	MathCommand +
+*	MathCommand *
+/	MathCommand /
+SQRT	MathCommand SQRT
 PRINT	PrintCommand
 DEFINE	DefineCommand
