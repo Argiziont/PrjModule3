@@ -18,46 +18,29 @@ namespace CommandResolver.Tests
             //
         }
 
-        #region snippet_Constructor_Passes_InputIsStringPairStack
+        #region snippet_Constructor_Passes_InputIsCommandContext
         [Fact]
-        public void Constructor_Passes_InputIsStringStringPairStack()
+        public void Constructor_Passes_InputIsCommandContext()
         {
             // Arrange
-            MutableKeyValuePair<string, object> pair = new MutableKeyValuePair<string, object>();
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
+            CommandContext context = new CommandContext();
 
             // Act
-            var result = Record.Exception(() => new CommandFactory(ref pair, ref stack));
+            var result = Record.Exception(() => new CommandFactory(context));
 
             // Assert
             Assert.Null(result);
         }
         #endregion
-        #region snippet_Constructor_ThrowsExeption_IfInputStackIsNull
+        #region snippet_Constructor_ThrowsExeption_IfCommandContextIsNull
         [Fact]
         public void Constructor_ThrowsExeption_IfInputStackIsNull()
         {
             // Arrange
-            MutableKeyValuePair<string, object> pair = new MutableKeyValuePair<string, object>();
-            Stack<MutableKeyValuePair<string, object>> stack = null;
+            CommandContext context = null;
 
             // Act
-            void result() => new CommandFactory(ref pair, ref stack);
-
-            // Assert
-            Assert.Throws<CommandExecutionException>(result);
-        }
-        #endregion
-        #region snippet_Constructor_ThrowsExeption_IfInputPairIsNull
-        [Fact]
-        public void Constructor_ThrowsExeption_IfInputPairIsNull()
-        {
-            // Arrange
-            MutableKeyValuePair<string, object> pair = null;
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
-
-            // Act
-            void result() => new CommandFactory(ref pair, ref stack);
+            void result() => new CommandFactory(context);
 
             // Assert
             Assert.Throws<CommandExecutionException>(result);
@@ -70,9 +53,8 @@ namespace CommandResolver.Tests
         {
             // Arrange
             string command = "DEFINE a 5";
-            MutableKeyValuePair<string, object> pair = new MutableKeyValuePair<string, object>();
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
-            var factory = new CommandFactory(ref pair, ref stack);
+            CommandContext context = new CommandContext();
+            var factory = new CommandFactory(context);
 
             // Act
             var result = factory.GetCommand(command);
@@ -87,9 +69,8 @@ namespace CommandResolver.Tests
         {
             // Arrange
             string command = "DEFINE a 5 test";
-            MutableKeyValuePair<string, object> pair = new MutableKeyValuePair<string, object>();
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
-            var factory = new CommandFactory(ref pair, ref stack);
+            CommandContext context = new CommandContext();
+            var factory = new CommandFactory(context);
 
             // Act
             void result ()=> factory.GetCommand(command);
@@ -104,9 +85,8 @@ namespace CommandResolver.Tests
         {
             // Arrange
             string command = "TEST 6";
-            MutableKeyValuePair<string, object> pair = new MutableKeyValuePair<string, object>();
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
-            var factory = new CommandFactory(ref pair, ref stack);
+            CommandContext context = new CommandContext();
+            var factory = new CommandFactory(context);
 
             // Act
             void result() => factory.GetCommand(command);

@@ -16,17 +16,17 @@ namespace CommandResolver.Tests
             //
         }
 
-        #region snippet_Constructor_Passes_InputIsStringStringPairStack
+        #region snippet_Constructor_Passes_InputIsStringPairCommandContext
         [Fact]
-        public void Constructor_Passes_InputIsStringStringPairStack()
+        public void Constructor_Passes_InputIsStringPairCommandContext()
         {
             // Arrange
             string variable = "var";
             string number = "55";
-            MutableKeyValuePair<string, object> pair = new MutableKeyValuePair<string, object>();
+            CommandContext context = new CommandContext();
 
             // Act
-            var result = Record.Exception(() => new DefineCommand(variable, number, ref pair));
+            var result = Record.Exception(() => new DefineCommand(variable, number, context));
 
             // Assert
             Assert.Null(result);
@@ -39,10 +39,10 @@ namespace CommandResolver.Tests
             // Arrange
             string variable = null;
             string number = "55";
-            MutableKeyValuePair<string, object> pair = new MutableKeyValuePair<string, object>();
+            CommandContext context = new CommandContext();
 
             // Act
-            void result() => new DefineCommand(variable, number, ref pair);
+            void result() => new DefineCommand(variable, number, context);
 
             // Assert
             Assert.Throws<CommandExecutionException>(result);
@@ -55,26 +55,26 @@ namespace CommandResolver.Tests
             // Arrange
             string variable = "var";
             string number = null;
-            MutableKeyValuePair<string, object> pair = new MutableKeyValuePair<string, object>();
+            CommandContext context = new CommandContext();
 
             // Act
-            void result() => new DefineCommand(variable, number, ref pair);
+            void result() => new DefineCommand(variable, number, context);
 
             // Assert
             Assert.Throws<CommandExecutionException>(result);
         }
         #endregion
-        #region snippet_Constructor_ThrowsExeption_IfInputKeyValuePairIsNull
+        #region snippet_Constructor_ThrowsExeption_IfCommandContextIsNull
         [Fact]
-        public void Constructor_ThrowsExeption_IfInputKeyValuePairIsNull()
+        public void Constructor_ThrowsExeption_IfCommandContextIsNull()
         {
             // Arrange
             string variable = "var";
             string number = "55";
-            MutableKeyValuePair<string, object> pair = null;
+            CommandContext context = null;
 
             // Act
-            void result() => new DefineCommand(variable, number, ref pair);
+            void result() => new DefineCommand(variable, number, context);
 
             // Assert
             Assert.Throws<CommandExecutionException>(result);
@@ -89,14 +89,14 @@ namespace CommandResolver.Tests
             string variable = "var";
             string number = "55.5";
             double expectedNumber = 55.5;
-            MutableKeyValuePair<string, object> pair = new MutableKeyValuePair<string, object>();
-            var define = new DefineCommand(variable, number, ref pair);
+            CommandContext context = new CommandContext();
+            var define = new DefineCommand(variable, number, context);
 
             // Act
             define.Run();
 
             // Assert
-            Assert.Equal(expectedNumber, pair.Value);
+            Assert.Equal(expectedNumber, context.Pair.Value);
         }
         #endregion
         #region snippet_Run_Passes_InputStringIsLong
@@ -107,14 +107,14 @@ namespace CommandResolver.Tests
             string variable = "var";
             string number = "55555555555";
             long expectedNumber = 55555555555;
-            MutableKeyValuePair<string, object> pair = new MutableKeyValuePair<string, object>();
-            var define = new DefineCommand(variable, number, ref pair);
+            CommandContext context = new CommandContext();
+            var define = new DefineCommand(variable, number, context);
 
             // Act
             define.Run();
 
             // Assert
-            Assert.Equal(expectedNumber, pair.Value);
+            Assert.Equal(expectedNumber, context.Pair.Value);
         }
         #endregion
         #region snippet_Run_ThrowsExeption_InputStringIsIncorrect
@@ -124,8 +124,8 @@ namespace CommandResolver.Tests
             // Arrange
             string variable = "var";
             string number = "55test";
-            MutableKeyValuePair<string, object> pair = new MutableKeyValuePair<string, object>();
-            var define = new DefineCommand(variable, number, ref pair);
+            CommandContext context = new CommandContext();
+            var define = new DefineCommand(variable, number, context);
 
             // Act
             void result() => define.Run();

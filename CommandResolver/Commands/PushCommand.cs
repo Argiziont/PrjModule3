@@ -1,6 +1,7 @@
 ﻿using CommandResolver.Exceptions;
 using CommandResolver.Helpers;
 using CommandResolver.Interfaces;
+using System;
 
 namespace CommandResolver.Commands
 {
@@ -50,12 +51,12 @@ namespace CommandResolver.Commands
         {
             if (VariableName == null && VariableValue == null)
             {
-                if (Context.Pair == null)
+                if (Context.Pair.Value == null)
                     throw new CommandExecutionException($"You trying to push last defined valiable you didn't define nothing");
                 Context.PushStack();
                 return;
             }
-            if (VariableValue == null && VariableValue != null)
+            if (VariableValue == null && VariableName != null)
             {
                 if (Context.Pair.Id == null)
                     throw new CommandExecutionException($"You trying to push {VariableName} but this variable is not defined");
@@ -67,7 +68,32 @@ namespace CommandResolver.Commands
             }
             if (VariableName != null && VariableValue != null)
             {
-                Context.PushStack(new MutableKeyValuePair<string, object>(VariableName, VariableValue));
+                object value;
+
+                if (VariableValue.Contains('.'))
+                {
+                    try
+                    {
+                        value = Convert.ToDouble(VariableValue);
+                    }
+                    catch
+                    {
+                        throw new CommandExecutionException("Wrong second parameter", Context.Pair);
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        value = Convert.ToInt64(VariableValue);
+                    }
+                    catch
+                    {
+                        throw new CommandExecutionException("Wrong second parameter", Context.Pair);
+                    }
+                }
+
+                Context.PushStack(new MutableKeyValuePair<string, object>(VariableName, value));
                 return;
             }
 

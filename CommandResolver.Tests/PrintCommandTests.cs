@@ -17,29 +17,29 @@ namespace CommandResolver.Tests
             //
         }
 
-        #region snippet_Constructor_Passes_InputIsPairStack
+        #region snippet_Constructor_Passes_InputIsCommandContext
         [Fact]
-        public void Constructor_Passes_InputIsPairStack()
+        public void Constructor_Passes_InputIsCommandContext()
         {
             // Arrange
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
+            CommandContext context = new CommandContext();
 
             // Act
-            var result = Record.Exception(() => new PrintCommand(ref stack));
+            var result = Record.Exception(() => new PrintCommand(context));
 
             // Assert
             Assert.Null(result);
         }
         #endregion
-        #region snippet_Constructor_ThrowsExeption_IfInputStackIsNull
+        #region snippet_Constructor_ThrowsExeption_IfCommandContextIsNull
         [Fact]
-        public void Constructor_ThrowsExeption_IfInputNumberNameIsNull()
+        public void Constructor_ThrowsExeption_IfCommandContextIsNull()
         {
             // Arrange
-            Stack<MutableKeyValuePair<string, object>> stack = null;
+            CommandContext context = null;
 
             // Act
-            void result() => new PrintCommand(ref stack);
+            void result() => new PrintCommand(context);
 
             // Assert
             Assert.Throws<CommandExecutionException>(result);
@@ -51,11 +51,11 @@ namespace CommandResolver.Tests
         public void Run_Passes_InputOperationIsCorrect()
         {
             // Arrange
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
+            CommandContext context = new CommandContext();
 
-            stack.Push(new MutableKeyValuePair<string, object>("var2", 5));
+            context.PushStack(new MutableKeyValuePair<string, object>("var2", 5));
 
-            var print = new PrintCommand(ref stack);
+            var print = new PrintCommand(context);
 
             // Act
             var result = Record.Exception(() => print.Run());
@@ -69,9 +69,9 @@ namespace CommandResolver.Tests
         public void Run_ThrowsException_InputStackIsIncorrect()
         {
             // Arrange
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
+            CommandContext context = new CommandContext();
 
-            var print = new PrintCommand(ref stack);
+            var print = new PrintCommand(context);
 
             // Act
             void result() => print.Run();

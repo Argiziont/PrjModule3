@@ -1,6 +1,7 @@
 ﻿using CommandResolver.Commands;
 using CommandResolver.Exceptions;
 using CommandResolver.Helpers;
+using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -17,17 +18,16 @@ namespace CommandResolver.Tests
             //
         }
 
-        #region snippet_Constructor_Passes_InputIsStringPairStack
+        #region snippet_Constructor_Passes_InputIsStringCommandContext
         [Fact]
-        public void Constructor_Passes_InputIsStringStringPairStack()
+        public void Constructor_Passes_InputIsStringCommandContext()
         {
             // Arrange
             string variable = "test";
-            MutableKeyValuePair<string, object> pair = new MutableKeyValuePair<string, object>();
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
+            CommandContext context = new CommandContext();
 
             // Act
-            var result = Record.Exception(() => new PushCommand(variable, ref pair, ref stack));
+            var result = Record.Exception(() => new PushCommand(variable, context));
 
             // Assert
             Assert.Null(result);
@@ -39,43 +39,25 @@ namespace CommandResolver.Tests
         {
             // Arrange
             string variable = null;
-            MutableKeyValuePair<string, object> pair = new MutableKeyValuePair<string, object>();
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
+            CommandContext context = new CommandContext();
 
             // Act
-            void result() => new PushCommand(variable, ref pair, ref stack);
+            void result() => new PushCommand(variable, context);
 
             // Assert
             Assert.Throws<CommandExecutionException>(result);
         }
         #endregion
-        #region snippet_Constructor_ThrowsExeption_IfInputStackIsNull
+        #region snippet_Constructor_ThrowsExeption_IfCommandContextIsNull
         [Fact]
-        public void Constructor_ThrowsExeption_IfInputStackIsNull()
+        public void Constructor_ThrowsExeption_IfCommandContextIsNull()
         {
             // Arrange
             string variable = "test";
-            MutableKeyValuePair<string, object> pair = new MutableKeyValuePair<string, object>();
-            Stack<MutableKeyValuePair<string, object>> stack = null;
+            CommandContext context = null;
 
             // Act
-            void result() => new PushCommand(variable, ref pair, ref stack);
-
-            // Assert
-            Assert.Throws<CommandExecutionException>(result);
-        }
-        #endregion
-        #region snippet_Constructor_ThrowsExeption_IfInputPairIsNull
-        [Fact]
-        public void Constructor_ThrowsExeption_IfInputPairIsNull()
-        {
-            // Arrange
-            string variable = "test";
-            MutableKeyValuePair<string, object> pair = null;
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
-
-            // Act
-            void result() => new PushCommand(variable, ref pair, ref stack);
+            void result() => new PushCommand(variable, context);
 
             // Assert
             Assert.Throws<CommandExecutionException>(result);
@@ -87,48 +69,30 @@ namespace CommandResolver.Tests
         public void Run_Passes_InputOperationIsCorrect()
         {
             // Arrange
-            string variable = "test";
-            MutableKeyValuePair<string, object> pair = new MutableKeyValuePair<string, object>("test", 5);
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
+            string variable = "testName";
+            string value = "5";
+            CommandContext context = new CommandContext();
 
-            var push = new PushCommand(variable, ref pair, ref stack);
+            var push = new PushCommand(variable, value, context);
 
             // Act
             push.Run();
 
             // Assert
-            Assert.Equal(pair.Id, stack.Peek().Id);
-            Assert.Equal(pair.Value, stack.Peek().Value);
+            Assert.Equal(variable, context.PeekLastStackElement().Id);
+            Assert.Equal(Convert.ToInt64(value), context.PeekLastStackElement().Value);
         }
         #endregion
-        #region snippet_Run_ThrowsException_InputVariableNameIsIncorrect
+        #region snippet_Run_ThrowsException_InputValueIsIncorrect
         [Fact]
-        public void Run_ThrowsException_InputVariableNameIsIncorrect()
-        {
-            // Arrange
-            string variable = "";
-            MutableKeyValuePair<string, object> pair = new MutableKeyValuePair<string, object>("test", 5);
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
-
-            var push = new PushCommand(variable, ref pair, ref stack);
-
-            // Act
-            void result() => push.Run();
-
-            // Assert
-            Assert.Throws<CommandExecutionException>(result);
-        }
-        #endregion
-        #region snippet_Run_ThrowsException_InputPairIsIncorrect
-        [Fact]
-        public void Run_ThrowsException_InputPairIsIncorrect()
+        public void Run_ThrowsException_InputValueIsIncorrect()
         {
             // Arrange
             string variable = "test";
-            MutableKeyValuePair<string, object> pair = new MutableKeyValuePair<string, object>();
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
+            string value = "testnumber";
+            CommandContext context = new CommandContext();
 
-            var push = new PushCommand(variable, ref pair, ref stack);
+            var push = new PushCommand(variable, value, context);
 
             // Act
             void result() => push.Run();

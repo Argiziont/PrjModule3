@@ -23,10 +23,10 @@ namespace CommandResolver.Tests
         {
             // Arrange
             string operation = "+";
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
+            CommandContext context = new CommandContext();
 
             // Act
-            var result = Record.Exception(() => new MathCommand(operation, ref stack));
+            var result = Record.Exception(() => new MathCommand(operation, context));
 
             // Assert
             Assert.Null(result);
@@ -38,25 +38,25 @@ namespace CommandResolver.Tests
         {
             // Arrange
             string operation = null;
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
+            CommandContext context = new CommandContext();
 
             // Act
-            void result() => new MathCommand(operation, ref stack);
+            void result() => new MathCommand(operation, context);
 
             // Assert
             Assert.Throws<CommandExecutionException>(result);
         }
         #endregion
-        #region snippet_Constructor_ThrowsExeption_IfInputStackIsNull
+        #region snippet_Constructor_ThrowsExeption_IfCommandContextIsNull
         [Fact]
-        public void Constructor_ThrowsExeption_IfInputStackIsNull()
+        public void Constructor_ThrowsExeption_IfCommandContextIsNull()
         {
             // Arrange
             string operation = "+";
-            Stack<MutableKeyValuePair<string, object>> stack = null;
+            CommandContext context = null;
 
             // Act
-            void result() => new MathCommand(operation, ref stack);
+            void result() => new MathCommand(operation,context);
 
             // Assert
             Assert.Throws<CommandExecutionException>(result);
@@ -69,21 +69,21 @@ namespace CommandResolver.Tests
         {
             // Arrange
             string operation = "+";
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
+            CommandContext context = new CommandContext();
 
-            stack.Push(new MutableKeyValuePair<string, object>("var1", 5));
-            stack.Push(new MutableKeyValuePair<string, object>("var2", 5));
+            context.PushStack(new MutableKeyValuePair<string, object>("var1", 5));
+            context.PushStack(new MutableKeyValuePair<string, object>("var2", 5));
 
             double expectedNumber = 10;
             var expectedName = "ans";
-            var math = new MathCommand(operation, ref stack);
+            var math = new MathCommand(operation, context);
 
             // Act
             math.Run();
 
             // Assert
-            Assert.Equal(expectedNumber, stack.Peek().Value);
-            Assert.Equal(expectedName, stack.Peek().Id);
+            Assert.Equal(expectedNumber, context.Stack.Peek().Value);
+            Assert.Equal(expectedName, context.PeekLastStackElement().Id);
         }
         #endregion
         #region snippet_Run_MultiplyVariable_InputOperationIsMultiply
@@ -92,21 +92,21 @@ namespace CommandResolver.Tests
         {
             // Arrange
             string operation = "*";
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
+            CommandContext context = new CommandContext();
 
-            stack.Push(new MutableKeyValuePair<string, object>("var1", 5));
-            stack.Push(new MutableKeyValuePair<string, object>("var2", 5));
+            context.PushStack(new MutableKeyValuePair<string, object>("var1", 5));
+            context.PushStack(new MutableKeyValuePair<string, object>("var2", 5));
 
             double expectedNumber = 25;
             var expectedName = "ans";
-            var math = new MathCommand(operation, ref stack);
+            var math = new MathCommand(operation, context);
 
             // Act
             math.Run();
 
             // Assert
-            Assert.Equal(expectedNumber, stack.Peek().Value);
-            Assert.Equal(expectedName, stack.Peek().Id);
+            Assert.Equal(expectedNumber, context.Stack.Peek().Value);
+            Assert.Equal(expectedName, context.PeekLastStackElement().Id);
         }
         #endregion
         #region snippet_Run_DividesVariable_InputOperationIsDivide
@@ -115,21 +115,21 @@ namespace CommandResolver.Tests
         {
             // Arrange
             string operation = "/";
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
+            CommandContext context = new CommandContext();
 
-            stack.Push(new MutableKeyValuePair<string, object>("var1", 5));
-            stack.Push(new MutableKeyValuePair<string, object>("var2", 5));
+            context.PushStack(new MutableKeyValuePair<string, object>("var1", 5));
+            context.PushStack(new MutableKeyValuePair<string, object>("var2", 5));
 
             double expectedNumber = 1;
             var expectedName = "ans";
-            var math = new MathCommand(operation, ref stack);
+            var math = new MathCommand(operation, context);
 
             // Act
             math.Run();
 
             // Assert
-            Assert.Equal(expectedNumber, stack.Peek().Value);
-            Assert.Equal(expectedName, stack.Peek().Id);
+            Assert.Equal(expectedNumber, context.Stack.Peek().Value);
+            Assert.Equal(expectedName, context.PeekLastStackElement().Id);
         }
         #endregion
         #region snippet_Run_DifferenceVariable_InputOperationIsDifference
@@ -138,21 +138,21 @@ namespace CommandResolver.Tests
         {
             // Arrange
             string operation = "-";
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
+            CommandContext context = new CommandContext();
 
-            stack.Push(new MutableKeyValuePair<string, object>("var1", 5));
-            stack.Push(new MutableKeyValuePair<string, object>("var2", 5));
+            context.PushStack(new MutableKeyValuePair<string, object>("var1", 5));
+            context.PushStack(new MutableKeyValuePair<string, object>("var2", 5));
 
             double expectedNumber = 0;
             var expectedName = "ans";
-            var math = new MathCommand(operation, ref stack);
+            var math = new MathCommand(operation, context);
 
             // Act
             math.Run();
 
             // Assert
-            Assert.Equal(expectedNumber, stack.Peek().Value);
-            Assert.Equal(expectedName, stack.Peek().Id);
+            Assert.Equal(expectedNumber, context.Stack.Peek().Value);
+            Assert.Equal(expectedName, context.PeekLastStackElement().Id);
         }
         #endregion
         #region snippet_Run_SqrtOfVariable_InputOperationIsSqrt
@@ -161,20 +161,20 @@ namespace CommandResolver.Tests
         {
             // Arrange
             string operation = "SQRT";
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
+            CommandContext context = new CommandContext();
 
-            stack.Push(new MutableKeyValuePair<string, object>("var1", 25));
+            context.PushStack(new MutableKeyValuePair<string, object>("var1", 25));
 
             double expectedNumber = 5;
             var expectedName = "ans";
-            var math = new MathCommand(operation, ref stack);
+            var math = new MathCommand(operation, context);
 
             // Act
             math.Run();
 
             // Assert
-            Assert.Equal(expectedNumber, stack.Peek().Value);
-            Assert.Equal(expectedName, stack.Peek().Id);
+            Assert.Equal(expectedNumber, context.Stack.Peek().Value);
+            Assert.Equal(expectedName, context.PeekLastStackElement().Id);
         }
         #endregion
         #region snippet_Run_ThrowsException_InputOperationIsIncorrect
@@ -183,12 +183,12 @@ namespace CommandResolver.Tests
         {
             // Arrange
             string operation = "test";
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
+            CommandContext context = new CommandContext();
 
-            stack.Push(new MutableKeyValuePair<string, object>("var1", 5));
-            stack.Push(new MutableKeyValuePair<string, object>("var2", 5));
+            context.PushStack(new MutableKeyValuePair<string, object>("var1", 5));
+            context.PushStack(new MutableKeyValuePair<string, object>("var2", 5));
 
-            var math = new MathCommand(operation, ref stack);
+            var math = new MathCommand(operation, context);
 
             // Act
             void result() => math.Run();
@@ -203,11 +203,11 @@ namespace CommandResolver.Tests
         {
             // Arrange
             string operation = "+";
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
+            CommandContext context = new CommandContext();
 
-            stack.Push(new MutableKeyValuePair<string, object>("var1", 5));
+            context.PushStack(new MutableKeyValuePair<string, object>("var1", 5));
 
-            var math = new MathCommand(operation, ref stack);
+            var math = new MathCommand(operation, context);
 
             // Act
             void result() => math.Run();

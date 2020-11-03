@@ -17,29 +17,29 @@ namespace CommandResolver.Tests
             //
         }
 
-        #region snippet_Constructor_Passes_InputIsPairStack
+        #region snippet_Constructor_Passes_InputIsCommandContext
         [Fact]
-        public void Constructor_Passes_InputIsPairStack()
+        public void Constructor_Passes_InputIsCommandContext()
         {
             // Arrange
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
+            CommandContext context = new CommandContext();
 
             // Act
-            var result = Record.Exception(() => new PopCommand(ref stack));
+            var result = Record.Exception(() => new PopCommand(context));
 
             // Assert
             Assert.Null(result);
         }
         #endregion
-        #region snippet_Constructor_ThrowsExeption_IfInputStackIsNull
+        #region snippet_Constructor_ThrowsExeption_IfInputCommandContextIsNull
         [Fact]
-        public void Constructor_ThrowsExeption_IfInputNumberNameIsNull()
+        public void Constructor_ThrowsExeption_IfInputCommandContextIsNull()
         {
             // Arrange
-            Stack<MutableKeyValuePair<string, object>> stack = null;
+            CommandContext context = null;
 
             // Act
-            void result() => new PopCommand(ref stack);
+            void result() => new PopCommand(context);
 
             // Assert
             Assert.Throws<CommandExecutionException>(result);
@@ -51,18 +51,18 @@ namespace CommandResolver.Tests
         public void Run_Passes_InputOperationIsCorrect()
         {
             // Arrange
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
+            CommandContext context = new CommandContext();
 
-            stack.Push(new MutableKeyValuePair<string, object>("var2", 5));
+            context.PushStack(new MutableKeyValuePair<string, object>("var2", 5));
             var stackSizeExpected = 0;
 
-            var pop = new PopCommand(ref stack);
+            var pop = new PopCommand(context);
 
             // Act
             pop.Run();
 
             // Assert
-            Assert.Equal(stackSizeExpected, stack.Count);
+            Assert.Equal(stackSizeExpected, context.Stack.Count);
         }
         #endregion
         #region snippet_Run_ThrowsException_InputStackIsIncorrect
@@ -70,9 +70,9 @@ namespace CommandResolver.Tests
         public void Run_ThrowsException_InputStackIsIncorrect()
         {
             // Arrange
-            Stack<MutableKeyValuePair<string, object>> stack = new Stack<MutableKeyValuePair<string, object>>();
+            CommandContext context = new CommandContext();
 
-            var pop = new PrintCommand( ref stack);
+            var pop = new PrintCommand(context);
 
             // Act
             void result() => pop.Run();
