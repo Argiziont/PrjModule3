@@ -14,6 +14,10 @@ namespace CommandResolver
         public CommandContext Context { get; private set; }
         public Dictionary<string, string> CommandList { get; private set; }
 
+        /// <summary>
+        /// Creates factory for managing commands
+        /// </summary>
+        /// <param name="context">Content for managing</param>
         public CommandFactory(CommandContext context)
         {
             if (File.Exists(CommandFilePath))

@@ -49,8 +49,6 @@ namespace PrjModule3
         {
 
             CommandFactory commandFactory = new CommandFactory(new CommandContext());
-
-            ICommand currentCommand = null;
             while (true)
             {
                 string inputCommand = Console.ReadLine();
@@ -67,6 +65,8 @@ namespace PrjModule3
 
                 inputCommand = inputCommand.Trim();
 
+
+                ICommand currentCommand;
                 try
                 {
                     currentCommand = commandFactory.GetCommand(inputCommand);
