@@ -26,7 +26,7 @@ namespace CommandResolver
                 CommandList = new Dictionary<string, string>();
                 Context = context ?? throw new CommandExecutionException("Could process this if there isn't context");
 
-                string[] linesFromFile = readText.Split(new[] { Environment.NewLine, "\n" }, StringSplitOptions.None);
+                string[] linesFromFile = readText.Split(new[] { Environment.NewLine, "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
                 foreach (string commandLine in linesFromFile)
                 {
