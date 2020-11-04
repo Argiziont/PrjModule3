@@ -1,6 +1,7 @@
 ﻿using CommandResolver.Commands;
 using CommandResolver.Exceptions;
 using CommandResolver.Helpers;
+using System.Linq;
 using Xunit;
 
 namespace CommandResolver.Tests
@@ -88,15 +89,15 @@ namespace CommandResolver.Tests
             // Arrange
             string variable = "var";
             string number = "55.5";
-            double expectedNumber = 55.5;
             CommandContext context = new CommandContext();
             var define = new DefineCommand(variable, number, context);
 
             // Act
             define.Run();
+            var variableFromDefines = context.PairsList.SingleOrDefault(p => p.Id == "var");
 
             // Assert
-            Assert.Equal(expectedNumber, context.Pair.Value);
+            Assert.IsType<MutableKeyValuePair<string, object>>(variableFromDefines);
         }
         #endregion
         #region snippet_Run_Passes_InputStringIsLong
@@ -106,15 +107,15 @@ namespace CommandResolver.Tests
             // Arrange
             string variable = "var";
             string number = "55555555555";
-            long expectedNumber = 55555555555;
             CommandContext context = new CommandContext();
             var define = new DefineCommand(variable, number, context);
 
             // Act
             define.Run();
+            var variableFromDefines = context.PairsList.SingleOrDefault(p => p.Id == "var");
 
             // Assert
-            Assert.Equal(expectedNumber, context.Pair.Value);
+            Assert.IsType<MutableKeyValuePair<string, object>>(variableFromDefines);
         }
         #endregion
         #region snippet_Run_ThrowsExeption_InputStringIsIncorrect

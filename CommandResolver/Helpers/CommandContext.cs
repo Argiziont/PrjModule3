@@ -6,6 +6,7 @@ namespace CommandResolver.Helpers
     public class CommandContext
     {
         public MutableKeyValuePair<string, object> Pair { get; private set; }
+        public List<MutableKeyValuePair<string, object>> PairsList { get; private set; }
         public Stack<MutableKeyValuePair<string, object>> Stack { get; private set; }
 
         /// <summary>
@@ -15,6 +16,7 @@ namespace CommandResolver.Helpers
         {
             Pair = new MutableKeyValuePair<string, object>();
             Stack = new Stack<MutableKeyValuePair<string, object>>();
+            PairsList = new List<MutableKeyValuePair<string, object>>();
         }
 
         /// <summary>
@@ -22,10 +24,9 @@ namespace CommandResolver.Helpers
         /// </summary>
         /// <param name="variableName">Your variable name</param>
         /// <param name="variableValue">Your variable value</param>
-        public void SetVariable(string variableName, object variableValue)
+        public void AddVariable(string variableName, object variableValue)
         {
-            Pair.Id = variableName;
-            Pair.Value = variableValue;
+            PairsList.Add(new MutableKeyValuePair<string, object>(variableName, variableValue));
         }
 
         /// <summary>
@@ -53,6 +54,17 @@ namespace CommandResolver.Helpers
         public void PushStack()
         {
             Stack.Push(new MutableKeyValuePair<string, object>(Pair.Id, Pair.Value));
+        }
+
+        /// <summary>
+        /// Adds element to stack and removes last 2
+        /// </summary>
+        /// <param name="pair">Your pair with name and value</param>
+        public void PushStackWithDel(MutableKeyValuePair<string, object> pair)
+        {
+            Stack.Pop();
+            Stack.Pop();
+            Stack.Push(new MutableKeyValuePair<string, object>(pair.Id, pair.Value));
         }
         /// <summary>
         /// 

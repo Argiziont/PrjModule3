@@ -2,7 +2,7 @@
 using CommandResolver.Helpers;
 using CommandResolver.Interfaces;
 using System;
-
+using System.Linq;
 namespace CommandResolver.Commands
 {
     public class PushCommand : ICommand
@@ -10,7 +10,7 @@ namespace CommandResolver.Commands
         public string VariableName { get; private set; }
         public string VariableValue { get; private set; }
         public CommandContext Context { get; set; }
-        
+
         /// <summary>
         /// Pushes your defined variable to stack
         /// </summary>
@@ -51,20 +51,27 @@ namespace CommandResolver.Commands
         {
             if (VariableName == null && VariableValue == null)
             {
-                if (Context.Pair.Value == null)
-                    throw new CommandExecutionException($"You trying to push last defined valiable you didn't define nothing");
-                Context.PushStack();
-                return;
+
+                    throw new CommandExecutionException($"You trying to push nothing");
             }
             if (VariableValue == null && VariableName != null)
             {
-                if (Context.Pair.Id == null)
-                    throw new CommandExecutionException($"You trying to push {VariableName} but this variable is not defined");
+                if(double.TryParse(VariableName, out double value))
+                {
+                   
+                    Context.PushStack("var", value);
+                    return;
+                }
+                else
+                {
+                    var variableFromDefines = Context.PairsList.SingleOrDefault(p => p.Id == VariableName);
+                    if (variableFromDefines == null)
+                        throw new CommandExecutionException($"You trying to push {VariableName} but this variable is not defined");
 
-                if (Context.Pair.Id != VariableName)
-                    throw new CommandExecutionException($"You trying to push {VariableName} but last variable that you defined is {Context.Pair.Id}", Context.Pair, Context.Stack);
-                Context.PushStack(new MutableKeyValuePair<string, object>(Context.Pair.Id, Context.Pair.Value));
-                return;
+
+                    Context.PushStack(variableFromDefines.Id, variableFromDefines.Value);
+                    return;
+                }
             }
             if (VariableName != null && VariableValue != null)
             {

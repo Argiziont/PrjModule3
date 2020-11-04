@@ -32,27 +32,35 @@ namespace CommandResolver.Commands
             {
                 case "*":
                     try { procNumbers = Context.PeekLastTwoStackElement(); } catch (CommandExecutionException ex) { throw ex; }
-                    Context.PushStack(new MutableKeyValuePair<string, object>("ans", (Convert.ToDouble(procNumbers[0].Value) * Convert.ToDouble(procNumbers[1].Value))));
+                    try { Context.PushStackWithDel(new MutableKeyValuePair<string, object>("ans", (Convert.ToDouble(procNumbers[0].Value) * Convert.ToDouble(procNumbers[1].Value)))); } catch (ArithmeticException ex) { throw new CommandExecutionException(ex.Message); }
                     break;
                 case "/":
                     try { procNumbers = Context.PeekLastTwoStackElement(); } catch (CommandExecutionException ex) { throw ex; }
-                    Context.PushStack(new MutableKeyValuePair<string, object>("ans", (Convert.ToDouble(procNumbers[0].Value) / Convert.ToDouble(procNumbers[1].Value))));
+                    if (Convert.ToDouble(procNumbers[1].Value)==0)
+                    {
+                        throw new CommandExecutionException("Divide by zero is not allowed");
+                    }
+                    try { Context.PushStackWithDel(new MutableKeyValuePair<string, object>("ans", Convert.ToDouble(procNumbers[0].Value) / Convert.ToDouble(procNumbers[1].Value))); } catch (ArithmeticException ex) { throw new CommandExecutionException(ex.Message); }
                     break;
                 case "+":
                     try { procNumbers = Context.PeekLastTwoStackElement(); } catch (CommandExecutionException ex) { throw ex; }
-                    Context.PushStack(new MutableKeyValuePair<string, object>("ans", (Convert.ToDouble(procNumbers[0].Value) + Convert.ToDouble(procNumbers[1].Value))));
+                    try { Context.PushStackWithDel(new MutableKeyValuePair<string, object>("ans", (Convert.ToDouble(procNumbers[0].Value) + Convert.ToDouble(procNumbers[1].Value)))); } catch (ArithmeticException ex) { throw new CommandExecutionException(ex.Message); }
                     break;
                 case "-":
                     try { procNumbers = Context.PeekLastTwoStackElement(); } catch (CommandExecutionException ex) { throw ex; }
-                    Context.PushStack(new MutableKeyValuePair<string, object>("ans", (Convert.ToDouble(procNumbers[0].Value) - Convert.ToDouble(procNumbers[1].Value))));
+                    try { Context.PushStackWithDel(new MutableKeyValuePair<string, object>("ans", (Convert.ToDouble(procNumbers[0].Value) - Convert.ToDouble(procNumbers[1].Value)))); } catch (ArithmeticException ex) { throw new CommandExecutionException(ex.Message); }
                     break;
                 case "SQRT":
                     MutableKeyValuePair<string, object> number = Context.PeekLastStackElement();
                     try
                     {
+                        if (Convert.ToDouble(number.Value)<=0)
+                            throw new CommandExecutionException($"Can't find square root from {number.Value}", Context.Stack);
+
+                        Context.PopLastStackElement();
                         Context.PushStack(new MutableKeyValuePair<string, object>("ans", Math.Sqrt(Convert.ToDouble(number.Value))));
                     }
-                    catch (Exception)
+                    catch
                     {
                         throw new CommandExecutionException("Not enough items in stack to do this", Context.Stack);
                     }

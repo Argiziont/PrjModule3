@@ -54,7 +54,7 @@ namespace CommandResolver.Commands
                     throw new CommandExecutionException("Wrong second parameter", Context.Pair);
                 }
             }
-            Context.SetVariable(VariableName, value);
+            Context.AddVariable(VariableName, value);
         }
     }
 }
